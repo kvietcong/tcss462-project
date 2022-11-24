@@ -3,16 +3,41 @@ package lambda;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
- 
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
+/**
+ * Get the image from S3 bucket
+ * @author Codi Chun
+ */
 public class GetObject {
 
+    /**
+     * For testing, can be delete later
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
-        //getObjectFromBucket();
+        new GetObject();
+      
+    }
+
+    /**
+     * Constructor
+     * @throws IOException
+     */
+    public GetObject() throws IOException{
+        getObjectFromBucket();
+    }
+
+    /**
+     * Get the image from S3 bucket and output the image to local
+     * @throws IOException
+     */
+    private static void getObjectFromBucket() throws IOException{
+         //getObjectFromBucket();
         //String bucket = "cc-image-converter";
         String bucket = "test.bucket.462-562.f22.cc";
         //String key = "input/bb.png";
@@ -26,6 +51,7 @@ public class GetObject {
                         .build();
          
         ResponseInputStream<GetObjectResponse> response = client.getObject(request);
+        
                  
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(key));
          
@@ -38,14 +64,5 @@ public class GetObject {
                              
         response.close();
         outputStream.close();
-      
-    }
-
-    // public GetObject(){
-
-    // }
-
-    private static void getObjectFromBucket() throws IOException{
- 
     }
 }
