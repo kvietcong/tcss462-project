@@ -13,8 +13,10 @@ public class GetObject {
 
     public static void main(String[] args) throws IOException {
         //getObjectFromBucket();
-        String bucket = "cc-image-converter";
-        String key = "original/husky.jpeg";
+        //String bucket = "cc-image-converter";
+        String bucket = "test.bucket.462-562.f22.cc";
+        //String key = "input/bb.png";
+        String key = "husky.jpeg";
         S3Client client = S3Client.builder().build();
         //AmazonS3 client = AmazonS3ClientBuilder
          
