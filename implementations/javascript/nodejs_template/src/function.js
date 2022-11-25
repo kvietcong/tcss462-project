@@ -1,117 +1,95 @@
+const fs = require("fs");
 const { loadImage, createCanvas } = require("canvas");
 
-// TODO: Clean up the code! Get better variable names, don't use fancy stuff, and abstract Image into class.
+const createImage = async path => {
+    const image = await loadImage(path);
+
+    const rows = image.height;
+    const cols = image.width;
+
+    const canvas = createCanvas(cols, rows);
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, cols, rows);
+
+    const imageData = context.getImageData(0, 0, cols, rows);
+    context.putImageData(imageData, 0, 0);
+
+    const rawData = imageData.data;
+
+    const getPixel = (row, col) => {
+        const baseIndex = 4 * ((row * cols) + col);
+        return {
+            red: rawData[baseIndex + 0],
+            green: rawData[baseIndex + 1],
+            blue: rawData[baseIndex + 2],
+            alpha: rawData[baseIndex + 3],
+        };
+    };
+    const setPixel = (row, col, rgba) => {
+        const baseIndex = 4 * ((row * cols) + col);
+        const { red, green, blue, alpha } = rgba;
+        imageData.data[baseIndex + 0] = red;
+        imageData.data[baseIndex + 1] = green;
+        imageData.data[baseIndex + 2] = blue;
+        imageData.data[baseIndex + 3] = alpha;
+    };
+    const createPNGStream = () => {
+        context.putImageData(imageData, 0, 0);
+        return canvas.createPNGStream();
+    };
+
+    return {
+        getPixel, setPixel, createPNGStream,
+        get rows() { return rows },
+        get cols() { return cols },
+        swapPixels(rowA, colA, rowB, colB) {
+            const tempPixel = getPixel(rowA, colA);
+            setPixel(rowA, colA, getPixel(rowB, colB));
+            setPixel(rowB, colB, tempPixel);
+        },
+        writeToFile(path) {
+            const out = fs.createWriteStream(path);
+            createPNGStream().pipe(out);
+            out.on("finish", () => console.log(`Image written to "${path}"`));
+        },
+        applyFilter(filter) {
+            filter(this);
+            return this;
+        },
+    };
+};
+
 const filters = {
     greyscale: image => {
-        const pixels = image.data;
-        const width = image.width;
-        const height = image.height;
-
-        console.log(width, height)
-
-        for (let row = 0; row < height; row++) {
-            for (let col = 0; col < width; col++) {
-                const [rI, gI, bI, _aI] = [
-                    4 * ((row * width) + col),
-                    4 * ((row * width) + col) + 1,
-                    4 * ((row * width) + col) + 2,
-                    4 * ((row * width) + col) + 3,
-                ];
-
-                const gray = Math.floor((pixels[rI] + pixels[gI] + pixels[bI]) / 3);
-
-                pixels[rI] = gray;
-                pixels[gI] = gray;
-                pixels[bI] = gray;
+        for (let row = 0; row < image.rows; row++) {
+            for (let col = 0; col < image.cols; col++) {
+                const pixel = image.getPixel(row, col);
+                const gray = Math.floor((pixel.red + pixel.green + pixel.blue) / 3);
+                pixel.red = pixel.green = pixel.blue = gray;
+                image.setPixel(row, col, pixel);
             }
         }
     },
     flipVertical: image => {
-        const pixels = image.data;
-        const width = image.width;
-        const height = image.height;
-
-        for (let row = 0; row < Math.floor(height / 2); row++) {
-            for (let col = 0; col < width; col++) {
-                const [rIa, gIa, bIa, _aIa] = [
-                    4 * ((row * width) + col),
-                    4 * ((row * width) + col) + 1,
-                    4 * ((row * width) + col) + 2,
-                    4 * ((row * width) + col) + 3,
-                ];
-                const [rIb, gIb, bIb, _aIb] = [
-                    4 * (((height - row - 1) * width) + col),
-                    4 * (((height - row - 1) * width) + col) + 1,
-                    4 * (((height - row - 1) * width) + col) + 2,
-                    4 * (((height - row - 1) * width) + col) + 3,
-                ];
-                // console.log(rIa, rIb)
-
-                const [tR, tG, tB] = [pixels[rIa], pixels[gIa], pixels[bIa]]
-                pixels[rIa] = pixels[rIb];
-                pixels[gIa] = pixels[gIb];
-                pixels[bIa] = pixels[bIb];
-                pixels[rIb] = tR;
-                pixels[gIb] = tG;
-                pixels[bIb] = tB;
-            }
-        }
+        for (let row = 0; row < Math.floor(image.rows / 2); row++)
+            for (let col = 0; col < image.cols; col++)
+                image.swapPixels(row, col, image.rows - row - 1, col);
     },
     flipHorizontal: image => {
-        const pixels = image.data;
-        const width = image.width;
-        const height = image.height;
-
-        for (let row = 0; row < height; row++) {
-            for (let col = 0; col < Math.floor(width / 2); col++) {
-                const [rIa, gIa, bIa, _aIa] = [
-                    4 * ((row * width) + col),
-                    4 * ((row * width) + col) + 1,
-                    4 * ((row * width) + col) + 2,
-                    4 * ((row * width) + col) + 3,
-                ];
-                const [rIb, gIb, bIb, _aIb] = [
-                    4 * ((row * width) + (width - col - 1)),
-                    4 * ((row * width) + (width - col - 1)) + 1,
-                    4 * ((row * width) + (width - col - 1)) + 2,
-                    4 * ((row * width) + (width - col - 1)) + 3,
-                ];
-                // console.log(rIa, rIb)
-
-                const [tR, tG, tB] = [pixels[rIa], pixels[gIa], pixels[bIa]]
-                pixels[rIa] = pixels[rIb];
-                pixels[gIa] = pixels[gIb];
-                pixels[bIa] = pixels[bIb];
-                pixels[rIb] = tR;
-                pixels[gIb] = tG;
-                pixels[bIb] = tB;
-            }
-        }
+        for (let row = 0; row < image.rows; row++)
+            for (let col = 0; col < Math.floor(image.cols / 2); col++)
+                image.swapPixels(row, col, row, image.cols - col - 1);
     },
-    soften: image => { },
+    // soften: image => { },
 };
-
-const applyFilter = (filter, image) => console.log(`Applying "${filter}" to Image!`) || filters[filter](image);
 
 (async () => {
     const args = process.argv.slice(2);
 
-    const imagePath = args[1] || "./image.jpg";
-    const image = await loadImage(imagePath);
-
-    const canvas = createCanvas(image.width, image.height);
-    const context = canvas.getContext("2d");
-    context.drawImage(image, 0, 0, image.width, image.height);
-    const imageData = context.getImageData(0, 0, image.width, image.height);
-    console.log("BEFORE:", imageData);
-    applyFilter(args[0] || "greyscale", imageData);
-    console.log("AFTER:", imageData);
-    context.putImageData(imageData, 0, 0);
-
-    const fs = require("fs");
-    const out = fs.createWriteStream("./test.png");
-    canvas.createPNGStream().pipe(out);
-    out.on("finish", () => console.log("The PNG file was created."));
+    const path = args[1] || "./image.jpg";
+    const filter = args[0] || "greyscale";
+    const image = await createImage(path)
+    image.applyFilter(filters[filter]).writeToFile("./test.png");
 })();
 
 /**
