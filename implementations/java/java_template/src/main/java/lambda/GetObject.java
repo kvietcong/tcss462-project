@@ -58,7 +58,7 @@ public class GetObject {
         //ResponseInputStream<GetObjectResponse> response = client.getObject(request);
         InputStream response = s3Object.getObjectContent();
         
-        
+
                  
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(key));
          
