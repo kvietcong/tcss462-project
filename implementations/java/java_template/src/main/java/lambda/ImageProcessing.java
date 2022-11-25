@@ -1,89 +1,97 @@
-// package lambda;
+package lambda;
 
-// import java.io.FileOutputStream;
+import java.io.File;
+import java.io.IOException;
 
-// import com.amazonaws.auth.PropertiesCredentials;
-// import com.amazonaws.services.lambda.runtime.Context;
-// import com.amazonaws.services.s3.AmazonS3;
-// import com.amazonaws.services.s3.AmazonS3Client;
-// import com.amazonaws.services.s3.model.GetObjectRequest;
-// import com.amazonaws.services.s3.model.S3Object;
-// import com.amazonaws.services.s3.model.S3ObjectInputStream;
-// import com.amazonaws.util.IOUtils;
+import com.amazonaws.services.lambda.runtime.Context;
 
-// import filters.FlipHorizontalFilter;
-// import filters.GrayscaleFilter;
-// import filters.SoftenFilter;
-// import image.PixelImage;
+import filters.FlipHorizontalFilter;
+import filters.GrayscaleFilter;
+import filters.SoftenFilter;
+import image.PixelImage;
  
-// /**
-//  * 
-//  * @author Codi Chun
-//  */
-// public class ImageProcessing {
+/**
+ * The class to process the image.
+ * @author Codi Chun
+ */
+public class ImageProcessing {
 
-//     static String myBucket;
-//     static String myImage;
+    static String myBucket;
+    static PixelImage myImage;
+    static String imagePath;
+    static File imageFile;
         
 
 
-//     public static void handleRequest(Object event, Context context){
-//         myBucket = "cc-image-converter";
-//         PixelImage image = downloadImage(event);
-//         processImage(image);
+    public static void main(String[] args) throws IOException {
+    downloadImage();
+    processImage();
+    uploadImage();
+    }
 
-//     }
+    /**
+     * lambda handler
+     * @param event
+     * @param context
+     * @throws IOException
+     */
+    public static void handleRequest(Object event, Context context)  throws IOException{
 
-//     public static PixelImage downloadImage(Object event){
-//         // String existingBucketName = "<your Bucket>";
-//         // String keyName = "/"+"";
-        
-//         // PropertiesCredentials p = new PropertiesCredentials(ImageProcessing.class.getResourceAsStream("AwsCredentials.properties"));
-//         // AmazonS3 s3Client = new AmazonS3Client(new PropertiesCredentials(
-//         //   ImageProcessing.class
-//         //     .getResourceAsStream("AwsCredentials.properties")));
-        
-//         // GetObjectRequest request = new GetObjectRequest(existingBucketName,
-//         //   keyName);
-//         // S3Object object = s3Client.getObject(request);
-//         // S3ObjectInputStream objectContent = object.getObjectContent();
-//         // IOUtils.copy(objectContent, new FileOutputStream("D://upload//test.jpg"));
-      
-//         S3Object s3object = s3Client.getObject(myBucket, "picture/pic.png");
-//         S3ObjectInputStream inputStream = s3object.getObjectContent();
-//         FileUtils.copyInputStreamToFile(inputStream, new File("/Users/user/Desktop/hello.txt"));
 
-//         return null;
+        downloadImage();
+        processImage();
+        uploadImage();
 
-//     }
+    }
 
-//     public static void processImage(PixelImage theImage){
+    /**
+     * Download the specific image from S3 bucket
+     * @throws IOException
+     */
+    public static void downloadImage() throws IOException {
+        new GetObject();
+        File image = new File(System.getProperty("user.dir")+"/husky.jpeg");
+        myImage = PixelImage.load(image);
+    }
 
-//         //filter the image
-//         GrayscaleFilter grayscale = new GrayscaleFilter();
-//         grayscale.filter(theImage);
+    /**
+     * Process the image by 3 filters
+     * @throws IOException
+     */
+    public static void processImage()throws IOException {
 
-//         SoftenFilter soften = new SoftenFilter();
-//         soften.filter(theImage);
+        //filter the image
+        GrayscaleFilter grayscale = new GrayscaleFilter();
+        grayscale.filter(myImage);
 
-//         FlipHorizontalFilter flip = new FlipHorizontalFilter();
-//         flip.filter(theImage);
+        SoftenFilter soften = new SoftenFilter();
+        soften.filter(myImage);
 
-//         //save the image
+        FlipHorizontalFilter flip = new FlipHorizontalFilter();
+        flip.filter(myImage);
 
-//     }
+        //create new file and save the image to be that file
+        String path = System.getProperty("user.dir");
+        File newFile = new File(path + "/edited.png");
+        newFile.getParentFile().mkdirs(); 
+        newFile.createNewFile();
+        myImage.save(newFile);
+    }
 
     
-
-//     public static void uploadImage(String fileName, String bucket, String ObjName){
-
-
-//     }
-
-
+    /**
+     * Upload the image to S3 bucket
+     */
+    public static void uploadImage(){
+        new UploadObject();
 
 
+    }
 
 
 
-// }
+
+
+
+
+}

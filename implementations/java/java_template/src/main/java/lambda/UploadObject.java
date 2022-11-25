@@ -1,53 +1,67 @@
-// package lambda;
+package lambda;
 
 
-// import com.amazonaws.AmazonServiceException;
-// import com.amazonaws.SdkClientException;
-// import com.amazonaws.regions.Regions;
-// import com.amazonaws.services.s3.AmazonS3;
-// import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-// import com.amazonaws.services.s3.model.ObjectMetadata;
-// import com.amazonaws.services.s3.model.PutObjectRequest;
+import java.io.File;
+import java.io.IOException;
 
-// import java.io.File;
-// import java.io.IOException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.waiters.WaiterResponse;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 
-// public class UploadObject {
+/**
+ * The class to upload an image to S3 bucket
+ * @author Codi Chun
+ */
+public class UploadObject {
 
-//     public static void main(String[] args) throws IOException {
-//         Regions clientRegion = Regions.DEFAULT_REGION;
-//         String bucketName = "*** Bucket name ***";
-//         String stringObjKeyName = "*** String object key name ***";
-//         String fileObjKeyName = "*** File object key name ***";
-//         String fileName = "*** Path to file to upload ***";
+    public static void main(String[] args) throws IOException {
+        //UploadObjectToBucket();
+    }
 
-//         try {
-//             //This code expects that you have AWS credentials set up per:
-//             // https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/setup-credentials.html
-//             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-//                     .withRegion(clientRegion)
-//                     .build();
+    /**
+     * Constructor
+     */
+    public UploadObject(){
+        UploadObjectToBucket();
 
-//             // Upload a text string as a new object.
-//             s3Client.putObject(bucketName, stringObjKeyName, "Uploaded String Object");
+    }
 
-//             // Upload a file as a new object with ContentType and title specified.
-//             PutObjectRequest request = new PutObjectRequest(bucketName, fileObjKeyName, new File(fileName));
-//             ObjectMetadata metadata = new ObjectMetadata();
-//             metadata.setContentType("plain/text");
-//             metadata.addUserMetadata("title", "someTitle");
-//             request.setMetadata(metadata);
-//             s3Client.putObject(request);
-//         } catch (AmazonServiceException e) {
-//             // The call was transmitted successfully, but Amazon S3 couldn't process 
-//             // it, so it returned an error response.
-//             e.printStackTrace();
-//         } catch (SdkClientException e) {
-//             // Amazon S3 couldn't be contacted for a response, or the client
-//             // couldn't parse the response from Amazon S3.
-//             e.printStackTrace();
-//         }
-//     }
-// }
+    /**
+     * The method to upload the image to bucket
+     */
+    public static void UploadObjectToBucket(){
+
+        String bucketName = "test.bucket.462-562.f22.cc";
+        //String folderName = "photos";
+         
+        String fileName = "edited.png";
+        String filePath = System.getProperty("user.dir") + "/" + fileName;
+        System.out.println(filePath);
+        String key = fileName;
+         
+        S3Client client = S3Client.builder().build();
+         
+        PutObjectRequest request = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        //.acl("public-read")
+                        .build();
+         
+        client.putObject(request, RequestBody.fromFile(new File(filePath)));
+         
+        S3Waiter waiter = client.waiter();
+        HeadObjectRequest requestWait = HeadObjectRequest.builder().bucket(bucketName).key(key).build();
+         
+        WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
+         
+        waiterResponse.matched().response().ifPresent(System.out::println);
+         
+        System.out.println("File " + fileName + " was uploaded.");     
+    }
+}
 
 

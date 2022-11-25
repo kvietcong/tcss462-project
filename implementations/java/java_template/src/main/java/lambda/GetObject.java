@@ -37,13 +37,13 @@ public class GetObject {
      * @throws IOException
      */
     private static void getObjectFromBucket() throws IOException{
-         //getObjectFromBucket();
-        //String bucket = "cc-image-converter";
+        //****************** **********************************
+        //TODO: SEE IF THE HARD CODE IMAGE NAME CAN BE FLEXIBLE
+        //****************************************************
+        
         String bucket = "test.bucket.462-562.f22.cc";
-        //String key = "input/bb.png";
         String key = "husky.jpeg";
         S3Client client = S3Client.builder().build();
-        //AmazonS3 client = AmazonS3ClientBuilder
          
         GetObjectRequest request = GetObjectRequest.builder()
                         .bucket(bucket)
