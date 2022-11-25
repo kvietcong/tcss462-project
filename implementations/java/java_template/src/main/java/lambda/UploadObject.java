@@ -1,16 +1,12 @@
 package lambda;
 
 
-import java.io.File;
-import java.io.IOException;
 
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.core.waiters.WaiterResponse;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.waiters.S3Waiter;
+import java.io.IOException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+
+
 
 /**
  * The class to upload an image to S3 bucket
@@ -43,22 +39,27 @@ public class UploadObject {
         System.out.println(filePath);
         String key = fileName;
          
-        S3Client client = S3Client.builder().build();
+        //S3Client client = S3Client.builder().build();
+        AmazonS3 client = AmazonS3ClientBuilder.standard().build();
          
-        PutObjectRequest request = PutObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        //.acl("public-read")
-                        .build();
+        // PutObjectRequest request = PutObjectRequest.builder()
+        //                 .bucket(bucketName)
+        //                 .key(key)
+        //                 //.acl("public-read")
+        //                 .build();
+        
          
-        client.putObject(request, RequestBody.fromFile(new File(filePath)));
+        // client.putObject(request, RequestBody.fromFile(new File(filePath)));
+        client.putObject(bucketName, key, filePath);
+
+        //TODO: SEE IF WE COULD ADD A WAITER HERE??
          
-        S3Waiter waiter = client.waiter();
-        HeadObjectRequest requestWait = HeadObjectRequest.builder().bucket(bucketName).key(key).build();
+        // S3Waiter waiter = client.waiter();
+        // HeadObjectRequest requestWait = HeadObjectRequest.builder().bucket(bucketName).key(key).build();
          
-        WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
+        // WaiterResponse<HeadObjectResponse> waiterResponse = waiter.waitUntilObjectExists(requestWait);
          
-        waiterResponse.matched().response().ifPresent(System.out::println);
+        // waiterResponse.matched().response().ifPresent(System.out::println);
          
         System.out.println("File " + fileName + " was uploaded.");     
     }

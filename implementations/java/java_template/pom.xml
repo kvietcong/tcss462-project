@@ -16,11 +16,11 @@
       </dependency> -->
 
 
-      <dependency>
+      <!-- <dependency>
         <groupId>software.amazon.awssdk</groupId>
         <artifactId>aws-sdk-java</artifactId>
         <version>2.18.24</version>
-      </dependency>
+      </dependency> -->
 
 
       <!-- <dependency>
@@ -30,11 +30,11 @@
         <type>pom</type>
       </dependency> -->
 
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.11.907</version>
-        </dependency>
+<dependency>
+    <groupId>com.amazonaws</groupId>
+    <artifactId>aws-java-sdk-s3</artifactId>
+    <version>1.12.349</version>
+</dependency>
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>jaxb-api</artifactId>

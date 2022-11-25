@@ -3,10 +3,13 @@ package lambda;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import software.amazon.awssdk.core.ResponseInputStream;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.S3Object;
+import java.io.InputStream;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+
+
 
 /**
  * Get the image from S3 bucket
@@ -38,19 +41,23 @@ public class GetObject {
      */
     private static void getObjectFromBucket() throws IOException{
         //****************** **********************************
-        //TODO: SEE IF THE HARD CODE IMAGE NAME CAN BE FLEXIBLE
+        //TODO: SEE IF THE HARD CODE IMAGE NAME CAN BE FLEXIBLE?
         //****************************************************
         
         String bucket = "test.bucket.462-562.f22.cc";
         String key = "husky.jpeg";
-        S3Client client = S3Client.builder().build();
+        //S3Client client = S3Client.builder().build();
+        AmazonS3 client = AmazonS3ClientBuilder.standard().build();
          
-        GetObjectRequest request = GetObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(key)
-                        .build();
-         
-        ResponseInputStream<GetObjectResponse> response = client.getObject(request);
+        // GetObjectRequest request = GetObjectRequest.builder()
+        //                 .bucket(bucket)
+        //                 .key(key)
+        //                 .build();
+        S3Object s3Object = client.getObject(new GetObjectRequest(bucket,key));
+
+        //ResponseInputStream<GetObjectResponse> response = client.getObject(request);
+        InputStream response = s3Object.getObjectContent();
+        
         
                  
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(key));
