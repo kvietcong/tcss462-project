@@ -94,7 +94,9 @@ const filters = {
 const applyFilter = (filter, image) => console.log(`Applying "${filter}" to Image!`) || filters[filter](image);
 
 (async () => {
-    const imagePath = "./origin_of_nature_by_julian_tomasini.jpg";
+    const args = process.argv.slice(2);
+
+    const imagePath = args[1] || "./image.jpg";
     const image = await loadImage(imagePath);
 
     const canvas = createCanvas(image.width, image.height);
@@ -102,7 +104,7 @@ const applyFilter = (filter, image) => console.log(`Applying "${filter}" to Imag
     context.drawImage(image, 0, 0, image.width, image.height);
     const imageData = context.getImageData(0, 0, image.width, image.height);
     console.log("BEFORE:", imageData);
-    applyFilter(process.argv.slice(2)[0] || "greyscale", imageData);
+    applyFilter(args[0] || "greyscale", imageData);
     console.log("AFTER:", imageData);
     context.putImageData(imageData, 0, 0);
 
