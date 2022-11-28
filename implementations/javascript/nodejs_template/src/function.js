@@ -1,5 +1,5 @@
-const fs = require("fs");
-const { loadImage, createCanvas } = require("canvas");
+const { createWriteStream } = require("fs");
+const { createCanvas, loadImage } = require("canvas");
 
 const createImage = async path => {
     const image = await loadImage(path);
@@ -15,6 +15,7 @@ const createImage = async path => {
     context.putImageData(imageData, 0, 0);
 
     const rawData = imageData.data;
+    console.log(rawData);
 
     const getPixel = (row, col) => {
         const baseIndex = 4 * ((row * cols) + col);
@@ -48,7 +49,7 @@ const createImage = async path => {
             setPixel(rowB, colB, tempPixel);
         },
         writeToFile(path) {
-            const out = fs.createWriteStream(path);
+            const out = createWriteStream(path);
             createPNGStream().pipe(out);
             out.on("finish", () => console.log(`Image written to "${path}"`));
         },
@@ -83,38 +84,30 @@ const filters = {
     // soften: image => { },
 };
 
-(async () => {
-    const args = process.argv.slice(2);
+// (async () => {
+//     const args = process.argv.slice(2);
+//
+//     const path = args[1] || "./image.jpg";
+//     const filter = args[0] || "greyscale";
+//     const image = await createImage(path)
+//     image.applyFilter(filters[filter]).writeToFile("./test.png");
+// })();
 
-    const path = args[1] || "./image.jpg";
-    const filter = args[0] || "greyscale";
-    const image = await createImage(path)
-    image.applyFilter(filters[filter]).writeToFile("./test.png");
-})();
+module.exports = {
+    handler: async (request, _context) => {
+        const Inspector = require("./Inspector");
+        const inspector = new Inspector();
+        inspector.inspectAll();
 
-/**
- * Define your FaaS Function here.
- * Each platform handler will call and pass parameters to this function.
- *
- * @param request A JSON object provided by the platform handler.
- * @param context A platform specific object used to communicate with the platform.
- * @returns A JSON object to use as a response.
- */
-module.exports = async (request, context) => {
-    //Import the module and collect data
-    const inspector = new (require("./Inspector"))();
-    inspector.inspectAll();
+        //Add custom message and finish the function
+        if (typeof request.name !== "undefined" && request.name !== null) {
+            inspector.addAttribute("message", "Hello " + request.name + "!");
+        } else {
+            inspector.addAttribute("message", "Hello World!");
+        }
 
-    console.log("test", context.test)
-
-    //Add custom message and finish the function
-    if (typeof request.name !== "undefined" && request.name !== null) {
-        inspector.addAttribute("message", "Hello " + request.name + "!");
-    } else {
-        inspector.addAttribute("message", "Hello World!");
-    }
-
-    inspector.inspectAllDeltas();
-    //inspector.pushS3("saafdump", context)
-    return inspector.finish();
+        inspector.inspectAllDeltas();
+        //inspector.pushS3("saafdump", context)
+        return inspector.finish();
+    },
 };
