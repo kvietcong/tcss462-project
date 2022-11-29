@@ -1,21 +1,14 @@
-const { createWriteStream } = require("fs");
-const { createCanvas, loadImage } = require("canvas");
+const { read } = require("jimp");
+const { writeFileSync, readFileSync } = require("fs");
+const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 const createImage = async path => {
-    const image = await loadImage(path);
+    const image = await read(path);
 
-    const rows = image.height;
-    const cols = image.width;
+    const rows = image.bitmap.height;
+    const cols = image.bitmap.width;
 
-    const canvas = createCanvas(cols, rows);
-    const context = canvas.getContext("2d");
-    context.drawImage(image, 0, 0, cols, rows);
-
-    const imageData = context.getImageData(0, 0, cols, rows);
-    context.putImageData(imageData, 0, 0);
-
-    const rawData = imageData.data;
-    console.log(rawData);
+    const rawData = image.bitmap.data;
 
     const getPixel = (row, col) => {
         const baseIndex = 4 * ((row * cols) + col);
@@ -29,18 +22,14 @@ const createImage = async path => {
     const setPixel = (row, col, rgba) => {
         const baseIndex = 4 * ((row * cols) + col);
         const { red, green, blue, alpha } = rgba;
-        imageData.data[baseIndex + 0] = red;
-        imageData.data[baseIndex + 1] = green;
-        imageData.data[baseIndex + 2] = blue;
-        imageData.data[baseIndex + 3] = alpha;
-    };
-    const createPNGStream = () => {
-        context.putImageData(imageData, 0, 0);
-        return canvas.createPNGStream();
+        rawData[baseIndex + 0] = red;
+        rawData[baseIndex + 1] = green;
+        rawData[baseIndex + 2] = blue;
+        rawData[baseIndex + 3] = alpha;
     };
 
     return {
-        getPixel, setPixel, createPNGStream,
+        getPixel, setPixel,
         get rows() { return rows },
         get cols() { return cols },
         swapPixels(rowA, colA, rowB, colB) {
@@ -49,9 +38,7 @@ const createImage = async path => {
             setPixel(rowB, colB, tempPixel);
         },
         writeToFile(path) {
-            const out = createWriteStream(path);
-            createPNGStream().pipe(out);
-            out.on("finish", () => console.log(`Image written to "${path}"`));
+            return image.writeAsync(path);
         },
         applyFilter(filter) {
             filter(this);
@@ -85,29 +72,52 @@ const filters = {
 };
 
 // (async () => {
-//     const args = process.argv.slice(2);
+//     try {
+//         const args = process.argv.slice(2);
 //
-//     const path = args[1] || "./image.jpg";
-//     const filter = args[0] || "greyscale";
-//     const image = await createImage(path)
-//     image.applyFilter(filters[filter]).writeToFile("./test.png");
+//         const path = args[1] || "C:/Users/minec/Downloads/image.jpg";
+//         const filter = args[0] || "greyscale";
+//         const image = await createImage(path)
+//         image.applyFilter(filters[filter]).writeToFile("C:/Users/minec/Downloads/test.png");
+//     } catch { }
 // })();
 
-module.exports = {
-    handler: async (request, _context) => {
-        const Inspector = require("./Inspector");
-        const inspector = new Inspector();
-        inspector.inspectAll();
+module.exports.handler = async (request, _context) => {
+    const Inspector = require("./Inspector");
+    const inspector = new Inspector();
+    inspector.inspectAll();
 
-        //Add custom message and finish the function
-        if (typeof request.name !== "undefined" && request.name !== null) {
-            inspector.addAttribute("message", "Hello " + request.name + "!");
-        } else {
-            inspector.addAttribute("message", "Hello World!");
-        }
+    const { key, filter, newKey } = request;
 
-        inspector.inspectAllDeltas();
-        //inspector.pushS3("saafdump", context)
-        return inspector.finish();
-    },
+    try {
+        const s3 = new S3Client({ region: "us-east-2" });
+        const object = await s3.send(new GetObjectCommand({
+            Bucket: "test.bucket.462-562.f22.kv",
+            Key: key,
+        }));
+        const imageData = await object.Body.transformToByteArray()
+        writeFileSync("/tmp/original", imageData);
+
+        const image = await createImage("/tmp/original")
+        await image.applyFilter(filters[filter]).writeToFile("/tmp/new");
+
+        await s3.send(new PutObjectCommand({
+            Bucket: "test.bucket.462-562.f22.kv",
+            Key: newKey,
+            Body: readFileSync("/tmp/new"),
+        }));
+    } catch (error) {
+        console.error(error);
+    }
+
+    //Add custom message and finish the function
+    if (typeof request.name !== "undefined" && request.name !== null) {
+        inspector.addAttribute("message", "Hello " + request.name + "!");
+    } else {
+        inspector.addAttribute("message", "Hello World!");
+    }
+
+    inspector.inspectAllDeltas();
+    //inspector.pushS3("saafdump", context)
+    return inspector.finish();
 };

@@ -3,8 +3,8 @@
 
 	"functionName":     "imageProcessingTest",
 
-	"lambdaHandler": "function.handler",
-	"lambdaRoleARN": "arn:aws:lambda:us-east-2:698338741675:function:imageProcessingTest",
+	"lambdaHandler": "index.handler",
+	"lambdaRoleARN": "arn:aws:iam::698338741675:role/service-role/imageProcessingTest-role-tu1y3ei1",
 	"lambdaSubnets": "",
 	"lambdaSecurityGroups": "",
 	"lambdaEnvironment": "Variables={EXAMPLEVAR1=VAL1,EXAMPLEVAR2=VAL2}",
@@ -12,6 +12,6 @@
 
 	"test": {
 		"key": "image.jpg",
-        "filter": "greyscale",
+        "filter": "greyscale"
 	}
 }
