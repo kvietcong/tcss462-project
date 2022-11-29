@@ -38,7 +38,7 @@ const createImage = async path => {
             setPixel(rowB, colB, tempPixel);
         },
         writeToFile(path) {
-            return image.writeAsync(path);
+            return image.quality(80).writeAsync(path);
         },
         applyFilter(filter) {
             filter(this);
@@ -91,11 +91,11 @@ module.exports.handler = async (request, _context) => {
 
     try {
         const s3 = new S3Client({ region: "us-east-2" });
-        const object = await s3.send(new GetObjectCommand({
+        const getResponse = await s3.send(new GetObjectCommand({
             Bucket: "test.bucket.462-562.f22.kv",
             Key: key,
         }));
-        const imageData = await object.Body.transformToByteArray()
+        const imageData = await getResponse.Body.transformToByteArray()
         writeFileSync("/tmp/original", imageData);
 
         const image = await createImage("/tmp/original")
@@ -103,7 +103,7 @@ module.exports.handler = async (request, _context) => {
 
         await s3.send(new PutObjectCommand({
             Bucket: "test.bucket.462-562.f22.kv",
-            Key: newKey,
+            Key: newKey || `${new Date().getTime()}.jpg`,
             Body: readFileSync("/tmp/new"),
         }));
     } catch (error) {
