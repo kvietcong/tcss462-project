@@ -83,7 +83,7 @@ const filters = {
     soften: image => {
         const weights = [
             [1, 2, 1],
-            [2, 0, 2],
+            [2, 4, 2],
             [1, 2, 1],
         ];
 
