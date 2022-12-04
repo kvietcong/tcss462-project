@@ -126,32 +126,32 @@ const filters = {
     },
 };
 
-(async () => {
-    try {
-        const args = process.argv.slice(2);
-
-        const filterInputs = args[0] || "greyscale";
-        const inPath = args[1] || "C:/Users/minec/Downloads/image.jpg";
-        const outPath = args[2] || "C:/Users/minec/Downloads/test.png";
-
-        console.log(`Loading ${inPath}`);
-        const image = await createImage(inPath);
-        for (const filterInput of filterInputs.split(",")) {
-            const inputs = filterInput.split(".");
-            const filter = inputs.length === 1 ? inputs[0] : inputs[1];
-            const repeats = inputs.length === 1 ? 1 : parseInt(inputs[0]);
-            console.log(`Applying ${filter} ${repeats} time(s)`);
-            for (let i = 1; i <= repeats; i++) {
-                if (i % 5 === 0) console.log(`  Step ${i}`);
-                image.applyFilter(filters[filter]);
-            }
-        }
-        console.log(`Writing to ${outPath}`);
-        image.writeToFileAsync(outPath);
-    } catch (error) {
-        console.error(error);
-    }
-})();
+// (async () => {
+//     try {
+//         const args = process.argv.slice(2);
+//
+//         const filterInputs = args[0] || "greyscale";
+//         const inPath = args[1] || "C:/Users/minec/Downloads/image.jpg";
+//         const outPath = args[2] || "C:/Users/minec/Downloads/test.png";
+//
+//         console.log(`Loading ${inPath}`);
+//         const image = await createImage(inPath);
+//         for (const filterInput of filterInputs.split(",")) {
+//             const inputs = filterInput.split(".");
+//             const filter = inputs.length === 1 ? inputs[0] : inputs[1];
+//             const repeats = inputs.length === 1 ? 1 : parseInt(inputs[0]);
+//             console.log(`Applying ${filter} ${repeats} time(s)`);
+//             for (let i = 1; i <= repeats; i++) {
+//                 if (i % 5 === 0) console.log(`  Step ${i}`);
+//                 image.applyFilter(filters[filter]);
+//             }
+//         }
+//         console.log(`Writing to ${outPath}`);
+//         image.writeToFileAsync(outPath);
+//     } catch (error) {
+//         console.error(error);
+//     }
+// })();
 
 module.exports.handler = async (request, _context) => {
     const Inspector = require("./Inspector");
