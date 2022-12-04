@@ -118,7 +118,7 @@ const filters = {
                     green = Math.min(Math.floor(green / sum), 255);
                     blue = Math.min(Math.floor(blue / sum), 255);
 
-                    image.setPixel(row, col, {red, green, blue});
+                    image.setPixel(row, col, { red, green, blue });
                 }
             }
         };
@@ -126,57 +126,65 @@ const filters = {
     },
 };
 
-// (async () => {
-//     try {
-//         const args = process.argv.slice(2);
-//
-//         const filterInputs = args[0] || "greyscale";
-//         const inPath = args[1] || "C:/Users/minec/Downloads/image.jpg";
-//         const outPath = args[2] || "C:/Users/minec/Downloads/test.png";
-//
-//         console.log(`Loading ${inPath}`);
-//         const image = await createImage(inPath);
-//         for (const filterInput of filterInputs.split(",")) {
-//             const inputs = filterInput.split(".");
-//             const filter = inputs.length === 1 ? inputs[0] : inputs[1];
-//             const repeats = inputs.length === 1 ? 1 : parseInt(inputs[0]);
-//             console.log(`Applying ${filter} ${repeats} time(s)`);
-//             for (let i = 1; i <= repeats; i++) {
-//                 if (i % 5 === 0) console.log(`  Step ${i}`);
-//                 image.applyFilter(filters[filter]);
-//             }
-//         }
-//         console.log(`Writing to ${outPath}`);
-//         image.writeToFileAsync(outPath);
-//     } catch (error) {
-//         console.error(error);
-//     }
-// })();
+(async () => {
+    try {
+        const args = process.argv.slice(2);
+
+        const filterInputs = args[0] || "greyscale";
+        const inPath = args[1] || "C:/Users/minec/Downloads/image.jpg";
+        const outPath = args[2] || "C:/Users/minec/Downloads/test.png";
+
+        console.log(`Loading ${inPath}`);
+        const image = await createImage(inPath);
+        for (const filterInput of filterInputs.split(",")) {
+            const inputs = filterInput.split(".");
+            const filter = inputs.length === 1 ? inputs[0] : inputs[1];
+            const repeats = inputs.length === 1 ? 1 : parseInt(inputs[0]);
+            console.log(`Applying ${filter} ${repeats} time(s)`);
+            for (let i = 1; i <= repeats; i++) {
+                if (i % 5 === 0) console.log(`  Step ${i}`);
+                image.applyFilter(filters[filter]);
+            }
+        }
+        console.log(`Writing to ${outPath}`);
+        image.writeToFileAsync(outPath);
+    } catch (error) {
+        console.error(error);
+    }
+})();
 
 module.exports.handler = async (request, _context) => {
     const Inspector = require("./Inspector");
     const inspector = new Inspector();
     inspector.inspectAll();
 
-    const { key, filter, newKey } = request;
+    const { key, filter } = request;
+    const repeats = request.repeats || 1;
+    const bucket = request.bucket || "test.bucket.462-562.f22.kv";
+    const newKey = request.newKey || `${new Date().getTime()}.jpg`;
 
     try {
         const s3 = new S3Client({ region: "us-east-2" });
         const getResponse = await s3.send(new GetObjectCommand({
-            Bucket: "test.bucket.462-562.f22.kv",
+            Bucket: bucket,
             Key: key,
         }));
         const imageData = await getResponse.Body.transformToByteArray()
         writeFileSync("/tmp/original", imageData);
 
         const image = await createImage("/tmp/original")
-        await image.applyFilter(filters[filter]).writeToFileAsync("/tmp/new");
+        for (let i = 0; i < repeats; i++)
+            image.applyFilter(filters[filter]);
+        await image.writeToFileAsync("/tmp/new");
 
         await s3.send(new PutObjectCommand({
-            Bucket: "test.bucket.462-562.f22.kv",
-            Key: newKey || `${new Date().getTime()}.jpg`,
+            Bucket: bucket,
+            Key: newKey,
             Body: readFileSync("/tmp/new"),
         }));
+
+        inspector.addAttribute("key", newKey);
+        inspector.addAttribute("bucket", bucket);
     } catch (error) {
         console.error(error);
     }
