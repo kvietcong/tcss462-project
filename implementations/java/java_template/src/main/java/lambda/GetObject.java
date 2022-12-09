@@ -23,29 +23,40 @@ public class GetObject {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        new GetObject();
+        new GetObject("test.bucket.462-562.f22.cc", "husky.jpeg");
       
     }
+
+    String bucket;
+    String key;
 
     /**
      * Constructor
      * @throws IOException
      */
-    public GetObject() throws IOException{
-        getObjectFromBucket();
+    public GetObject(String theBuket, String theKey) throws IOException{
+        bucket = theBuket;
+        //"test.bucket.462-562.f22.cc";
+        key = theKey;
+        //"husky.jpeg";
+        getObjectFromBucket(bucket, key);
     }
 
     /**
      * Get the image from S3 bucket and output the image to local
      * @throws IOException
      */
-    private static void getObjectFromBucket() throws IOException{
+    private static void getObjectFromBucket(String bucket, String key) throws IOException{
         //****************** **********************************
         //TODO: SEE IF THE HARD CODE IMAGE NAME CAN BE FLEXIBLE?
         //****************************************************
         
-        String bucket = "test.bucket.462-562.f22.cc";
-        String key = "husky.jpeg";
+        //String bucket = "test.bucket.462-562.f22.cc";
+        //String key = "husky.jpeg";
+
+
+
+
         //S3Client client = S3Client.builder().build();
         AmazonS3 client = AmazonS3ClientBuilder.standard().build();
          

@@ -18,24 +18,28 @@ public class UploadObject {
         //UploadObjectToBucket();
     }
 
+    String bucket;
+
     /**
      * Constructor
      */
-    public UploadObject(){
-        UploadObjectToBucket();
+    public UploadObject(String theBucket, String fileName){
+        bucket = theBucket;
+        UploadObjectToBucket(bucket, fileName);
 
     }
 
     /**
      * The method to upload the image to bucket
      */
-    public static void UploadObjectToBucket(){
+    public static void UploadObjectToBucket(String bucketName, String fileName){
 
-        String bucketName = "test.bucket.462-562.f22.cc";
+        //String bucketName = "test.bucket.462-562.f22.cc";
         //String folderName = "photos";
          
-        String fileName = "edited.png";
-        String filePath = System.getProperty("user.dir") + "/" + fileName;
+        //String fileName = "edited.png";
+        //String filePath = System.getProperty("user.dir") + "/" + fileName;
+        String filePath = "/tmp" + "/" + fileName;
         System.out.println(filePath);
         String key = fileName;
          
