@@ -75,17 +75,17 @@ public class ImageProcessing {
     public static void processImage() throws IOException {
 
         //filter the image
-        if(filter.equals("GS")){
+        if(filter.equals("greyscale")){
             GrayscaleFilter grayscale = new GrayscaleFilter();
             grayscale.filter(myImage);
         }
 
-        if(filter.equals("ST")){
+        if(filter.equals("soften")){
             SoftenFilter soften = new SoftenFilter();
             soften.filter(myImage);
         }
 
-        if(filter.equals("FH")){
+        if(filter.equals("flipHorizontal")){
             FlipHorizontalFilter flip = new FlipHorizontalFilter();
             flip.filter(myImage);
         }
