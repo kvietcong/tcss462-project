@@ -10,8 +10,8 @@
         }
     ],
 
-    "runs": 12,
-    "threads": 12,
+    "runs": 25,
+    "threads": 25,
     "iterations": 1,
     "sleepTime": 1,
     "randomSeed": 42,
@@ -37,5 +37,5 @@
 
     "openCSV": true,
     "combineSheets": false,
-    "warmupBuffer": 1
+    "warmupBuffer": 0
 }
