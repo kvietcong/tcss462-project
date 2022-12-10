@@ -15,6 +15,7 @@ import java.io.InputStream;
  * @author Marty Stepp
  * @author Daniel M. Zimmerman
  * @author Alan Fowler - changes to variable naming and javadoc
+ * @author Codi Chun - Add method to read input stream
  * @version 1.2
  */
 
@@ -67,7 +68,7 @@ public final class PixelImage extends BufferedImage {
      * Loads an image from the specified file and returns a PixelImage
      * containing it.
      * 
-     * @param theFile The file.
+     * @param input The input stream
      * @return the PixelImage.
      * @exception IOException if there is a problem loading the image.
      */

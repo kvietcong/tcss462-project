@@ -3,17 +3,11 @@ package lambda;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
-
 import filters.FlipHorizontalFilter;
 import filters.GrayscaleFilter;
 import filters.SoftenFilter;
 import image.PixelImage;
-
-
-
 
 
  
@@ -104,18 +98,5 @@ public class ImageProcessing {
     public static void uploadImage(){
         String fileName = "edited-" + key;
         new UploadObject(bucket, fileName);
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
 }
