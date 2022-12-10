@@ -101,13 +101,12 @@ public class ImageProcessing {
     public static void processImageTwo( String option , int n )throws IOException {
 
         //  by getting input from the keyboard
-
+        // c
         //String option = "";
         //Scanner s = new Scanner(system.in);
         //option = s.nextLine();
 
         //filter the image
-
         for ( int i = 0 ; i< n; i++) {
 
             switch (option) {
