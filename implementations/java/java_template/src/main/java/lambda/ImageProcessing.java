@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import com.amazonaws.services.lambda.runtime.Context;
 import filters.FlipHorizontalFilter;
+import filters.FlipVerticalFilter;
 import filters.GrayscaleFilter;
 import filters.SoftenFilter;
 import image.PixelImage;
@@ -91,7 +92,70 @@ public class ImageProcessing {
         myImage.save(newFile);
     }
 
-    
+
+
+    /**
+     * Process the image by 1 chosen filter
+     * @throws IOException
+     */
+    public static void processImageTwo( String option , int n )throws IOException {
+
+        //  by getting input from the keyboard
+
+        //String option = "";
+        //Scanner s = new Scanner(system.in);
+        //option = s.nextLine();
+
+        //filter the image
+
+        for ( int i = 0 ; i< n; i++) {
+
+            switch (option) {
+                case "greyscale":
+                    GrayscaleFilter grayscale = new GrayscaleFilter();
+                    grayscale.filter(myImage);
+                    break;
+
+                case "soften":
+                    SoftenFilter soften = new SoftenFilter();
+                    soften.filter(myImage);
+                    break;
+
+                case "flipHorizontal":
+                    FlipHorizontalFilter flip = new FlipHorizontalFilter();
+                    flip.filter(myImage);
+                    break;
+
+                case "flipVertical":
+                    FlipVerticalFilter flipv = new FlipVerticalFilter();
+                    flipv.filter(myImage);
+                    break;
+            }
+
+            //   using a different name
+
+            //  What would be the best option ?
+
+
+        /*switch( option ){
+            case "greyscale": case "Greyscale": GrayscaleFilter grayscale = new GrayscaleFilter();
+                grayscale.filter(myImage);  break;
+
+            case "soften": case "Soften":  SoftenFilter soften = new SoftenFilter();
+                soften.filter(myImage);  break;
+
+            case "flipHorizontal": case "Flip":  FlipHorizontalFilter flip = new FlipHorizontalFilter();
+                flip.filter(myImage);  break;
+        }*/
+            //create new file and save the image to be that file
+            String path = System.getProperty("user.dir");
+            File newFile = new File(path + "/edited.png");
+            newFile.getParentFile().mkdirs();
+            newFile.createNewFile();
+            myImage.save(newFile);
+
+        }
+    }
     /**
      * Upload the image to S3 bucket
      */
