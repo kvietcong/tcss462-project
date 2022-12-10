@@ -7,6 +7,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.io.InputStream;
 
 /**
  * Provides an interface to a picture as an array of pixels.
@@ -14,6 +15,7 @@ import javax.imageio.ImageIO;
  * @author Marty Stepp
  * @author Daniel M. Zimmerman
  * @author Alan Fowler - changes to variable naming and javadoc
+ * @author Codi Chun - Add method to read input stream
  * @version 1.2
  */
 
@@ -53,6 +55,28 @@ public final class PixelImage extends BufferedImage {
 
         if (buf == null) {
             throw new IOException("File did not contain a valid image: " + theFile);
+        }
+
+        final PixelImage image =
+                new PixelImage(buf.getWidth(), buf.getHeight(), BufferedImage.TYPE_INT_RGB);
+        final Graphics g = image.getGraphics();
+        g.drawImage(buf, 0, 0, null);
+        return image;
+    }
+
+        /**
+     * Loads an image from the specified file and returns a PixelImage
+     * containing it.
+     * 
+     * @param input The input stream
+     * @return the PixelImage.
+     * @exception IOException if there is a problem loading the image.
+     */
+    public static PixelImage load(final InputStream input) throws IOException {
+        final BufferedImage buf = ImageIO.read(input);
+
+        if (buf == null) {
+            throw new IOException("File did not contain a valid image: " + "input stream");
         }
 
         final PixelImage image =

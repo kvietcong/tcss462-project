@@ -2,13 +2,14 @@ package lambda;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.util.HashMap;
 import com.amazonaws.services.lambda.runtime.Context;
-
 import filters.FlipHorizontalFilter;
 import filters.GrayscaleFilter;
 import filters.SoftenFilter;
 import image.PixelImage;
+
+
  
 /**
  * The class to process the image.
@@ -16,7 +17,7 @@ import image.PixelImage;
  */
 public class ImageProcessing {
 
-    static String myBucket;
+    //static String myBucket;
     static PixelImage myImage;
     static String imagePath;
     static File imageFile;
@@ -24,10 +25,17 @@ public class ImageProcessing {
 
 
     public static void main(String[] args) throws IOException {
+    bucket = "test.bucket.462-562.f22.cc";
+    key = "husky.jpeg"; 
     downloadImage();
     processImage();
     uploadImage();
     }
+
+
+    static String bucket;
+    static String key;
+
 
     /**
      * lambda handler
@@ -35,8 +43,9 @@ public class ImageProcessing {
      * @param context
      * @throws IOException
      */
-    public static void handleRequest(Object event, Context context)  throws IOException{
-
+    public static void handleRequest(HashMap<String, String> request, Context context)  throws IOException{
+        bucket = request.get("bucket");
+        key = request.get("key");
 
         downloadImage();
         processImage();
@@ -49,9 +58,11 @@ public class ImageProcessing {
      * @throws IOException
      */
     public static void downloadImage() throws IOException {
-        new GetObject();
-        File image = new File(System.getProperty("user.dir")+"/husky.jpeg");
-        myImage = PixelImage.load(image);
+        GetObject object = new GetObject(bucket, key);
+        //File image = new File(System.getProperty("user.dir")+"/husky.jpeg");
+        //File image = new File("/tmp/"+key);
+        //myImage = PixelImage.load(image);
+        myImage = object.pixelImage;
     }
 
     /**
@@ -71,8 +82,10 @@ public class ImageProcessing {
         flip.filter(myImage);
 
         //create new file and save the image to be that file
-        String path = System.getProperty("user.dir");
-        File newFile = new File(path + "/edited.png");
+
+        //String path = System.getProperty("user.dir");
+        String path = "/tmp";
+        File newFile = new File(path + "/edited-" + key);
         newFile.getParentFile().mkdirs(); 
         newFile.createNewFile();
         myImage.save(newFile);
@@ -83,15 +96,7 @@ public class ImageProcessing {
      * Upload the image to S3 bucket
      */
     public static void uploadImage(){
-        new UploadObject();
-
-
+        String fileName = "edited-" + key;
+        new UploadObject(bucket, fileName);
     }
-
-
-
-
-
-
-
 }
