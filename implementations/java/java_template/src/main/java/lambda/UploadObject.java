@@ -1,5 +1,6 @@
 package lambda;
 
+import java.io.File;
 import java.io.IOException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -33,10 +34,11 @@ public class UploadObject {
     public static void UploadObjectToBucket(String bucketName, String fileName){
 
         String filePath = "/tmp" + "/" + fileName;
+        //String filePath = System.getProperty("user.dir") + "/" + fileName;
         System.out.println(filePath);
         String key = fileName;
         AmazonS3 client = AmazonS3ClientBuilder.standard().build();
-        client.putObject(bucketName, key, filePath);
+        client.putObject(bucketName, key, new File(filePath));
 
         //TODO: SEE IF WE COULD ADD A WAITER HERE??
          
