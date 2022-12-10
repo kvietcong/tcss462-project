@@ -31,6 +31,8 @@ public class ImageProcessing {
 
 
     public static void main(String[] args) throws IOException {
+    bucket = "test.bucket.462-562.f22.cc";
+    key = "husky.jpeg"; 
     downloadImage();
     processImage();
     uploadImage();
@@ -62,10 +64,11 @@ public class ImageProcessing {
      * @throws IOException
      */
     public static void downloadImage() throws IOException {
-        new GetObject(bucket, key);
+        GetObject object = new GetObject(bucket, key);
         //File image = new File(System.getProperty("user.dir")+"/husky.jpeg");
-        File image = new File("/tmp/"+key);
-        myImage = PixelImage.load(image);
+        //File image = new File("/tmp/"+key);
+        //myImage = PixelImage.load(image);
+        myImage = object.pixelImage;
     }
 
     /**
