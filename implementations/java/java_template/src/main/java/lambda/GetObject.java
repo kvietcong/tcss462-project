@@ -22,7 +22,7 @@ public class GetObject {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        new GetObject("test.bucket.462-562.f22.cc", "husky.jpeg");
+        new GetObject("test.bucket.462-562.f22.cmu", "husky.jpeg");
       
     }
 
