@@ -8,6 +8,7 @@ import filters.FlipHorizontalFilter;
 import filters.GrayscaleFilter;
 import filters.SoftenFilter;
 import image.PixelImage;
+import saaf.Inspector;
 
 
  
@@ -45,7 +46,14 @@ public class ImageProcessing {
      * @param context
      * @throws IOException
      */
-    public static void handleRequest(HashMap<String, String> request, Context context)  throws IOException{
+    public static HashMap<String, Object> handleRequest(HashMap<String, String> request, Context context)  throws IOException{
+                //Collect initial data.
+                Inspector inspector = new Inspector();
+                inspector.inspectAll();
+
+
+
+
         bucket = request.get("bucket");
         key = request.get("key");
         filter = request.get("filter");
@@ -53,6 +61,10 @@ public class ImageProcessing {
         downloadImage();
         processImage();
         uploadImage();
+
+                //Collect final information such as total runtime and cpu deltas.
+                inspector.inspectAllDeltas();
+                return inspector.finish();
 
     }
 
