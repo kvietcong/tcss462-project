@@ -10,7 +10,7 @@
         }
     ],
 
-    "runs": 6,
+    "runs": 5,
     "threads": 1,
     "iterations": 1,
     "sleepTime": 1,

@@ -4,14 +4,14 @@
     "memorySettings": [],
     "payloads": [
         {
-            "key": "mountains.jpg",
+            "key": "husky.jpg",
             "filter": "greyscale",
-            "newKey": "mountains-greyscale.jpg"
+            "newKey": "husky-greyscale.jpg"
         }
     ],
 
-    "runs": 5,
-    "threads": 1,
+    "runs": 25,
+    "threads": 25,
     "iterations": 1,
     "sleepTime": 1,
     "randomSeed": 42,
@@ -37,5 +37,5 @@
 
     "openCSV": true,
     "combineSheets": false,
-    "warmupBuffer": 1
+    "warmupBuffer": 0
 }
