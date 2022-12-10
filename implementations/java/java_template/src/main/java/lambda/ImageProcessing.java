@@ -105,7 +105,7 @@ public class ImageProcessing {
         //String option = "";
         //Scanner s = new Scanner(system.in);
         //option = s.nextLine();
-
+        File newFile = null;
         //filter the image
         for ( int i = 0 ; i< n; i++) {
 
@@ -148,12 +148,13 @@ public class ImageProcessing {
         }*/
             //create new file and save the image to be that file
             String path = System.getProperty("user.dir");
-            File newFile = new File(path + "/edited.png");
+            newFile = new File(path + "/edited.png");
             newFile.getParentFile().mkdirs();
             newFile.createNewFile();
-            myImage.save(newFile);
 
         }
+        
+        myImage.save(newFile);
     }
     /**
      * Upload the image to S3 bucket
