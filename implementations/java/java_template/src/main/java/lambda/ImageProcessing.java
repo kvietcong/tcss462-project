@@ -27,6 +27,7 @@ public class ImageProcessing {
     public static void main(String[] args) throws IOException {
     bucket = "test.bucket.462-562.f22.cc";
     key = "husky.jpeg"; 
+    filter = "ST";
     downloadImage();
     processImage();
     uploadImage();
@@ -35,6 +36,7 @@ public class ImageProcessing {
 
     static String bucket;
     static String key;
+    static String filter;
 
 
     /**
@@ -46,6 +48,7 @@ public class ImageProcessing {
     public static void handleRequest(HashMap<String, String> request, Context context)  throws IOException{
         bucket = request.get("bucket");
         key = request.get("key");
+        filter = request.get("filter");
 
         downloadImage();
         processImage();
@@ -69,25 +72,31 @@ public class ImageProcessing {
      * Process the image by 3 filters
      * @throws IOException
      */
-    public static void processImage()throws IOException {
+    public static void processImage() throws IOException {
 
         //filter the image
-        GrayscaleFilter grayscale = new GrayscaleFilter();
-        grayscale.filter(myImage);
+        if(filter.equals("GS")){
+            GrayscaleFilter grayscale = new GrayscaleFilter();
+            grayscale.filter(myImage);
+        }
 
-        SoftenFilter soften = new SoftenFilter();
-        soften.filter(myImage);
+        if(filter.equals("ST")){
+            SoftenFilter soften = new SoftenFilter();
+            soften.filter(myImage);
+        }
 
-        FlipHorizontalFilter flip = new FlipHorizontalFilter();
-        flip.filter(myImage);
+        if(filter.equals("FH")){
+            FlipHorizontalFilter flip = new FlipHorizontalFilter();
+            flip.filter(myImage);
+        }
 
         //create new file and save the image to be that file
 
         //String path = System.getProperty("user.dir");
         String path = "/tmp";
         File newFile = new File(path + "/edited-" + key);
-        newFile.getParentFile().mkdirs(); 
-        newFile.createNewFile();
+        //newFile.getParentFile().mkdirs(); 
+        //newFile.createNewFile();
         myImage.save(newFile);
     }
 
@@ -97,6 +106,7 @@ public class ImageProcessing {
      */
     public static void uploadImage(){
         String fileName = "edited-" + key;
+        System.out.println(fileName);
         new UploadObject(bucket, fileName);
     }
 }
