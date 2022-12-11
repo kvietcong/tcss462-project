@@ -27,14 +27,14 @@ def clean_data():
 
         filter=lambda df: df["payload"].map(lambda payload: payload["filter"]),
         filename=lambda df: df["payload"].map(lambda payload: payload["key"]),
-        containter_state=lambda df: np.where(
+        container_state=lambda df: np.where(
             df["newcontainer"] == 1, "cold", "hot"
         ),
     )
 
     grouped_columns = [
         # "cpuType",
-        "filename", "filter", "containter_state", "language",
+        "filename", "filter", "container_state", "language",
     ]
     runtime_results = df.groupby(grouped_columns)["runtime"] \
         .agg(["mean", "std", "count"])
