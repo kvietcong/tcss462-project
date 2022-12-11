@@ -153,7 +153,7 @@ const filters = {
 //     }
 // })();
 
-module.exports.handler = async (request, _context) => {
+const handler = async (request, _context) => {
     const Inspector = require("./Inspector");
     const inspector = new Inspector();
     inspector.inspectAll();
@@ -161,7 +161,7 @@ module.exports.handler = async (request, _context) => {
     const { key, filter } = request;
     const repeats = request.repeats || 1;
     const bucket = request.bucket || "test.bucket.462-562.f22.kv";
-    const newKey = request.newKey || `${new Date().getTime()}.jpg`;
+    const newKey = (request.newKey || `${new Date().getTime()}.jpg`).replace("{}", key);
 
     try {
         const s3 = new S3Client({ region: "us-east-2" });
@@ -200,3 +200,5 @@ module.exports.handler = async (request, _context) => {
     //inspector.pushS3("saafdump", context)
     return inspector.finish();
 };
+
+module.exports.handler = handler;

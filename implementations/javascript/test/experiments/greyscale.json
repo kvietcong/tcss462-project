@@ -2,21 +2,24 @@
     "callWithCLI": true,
     "callAsync": false,
     "memorySettings": [],
+    "parentPayload": {
+        "filter": "greyscale",
+        "newKey": "greyscale-{}"
+    },
     "payloads": [
-        {
-            "key": "mountains.jpg",
-            "filter": "greyscale",
-            "newKey": "mountains-greyscale.jpg"
-        }
+        { "key": "mountains.jpg" },
+        { "key": "husky.jpeg" },
+        { "key": "mountains.jpg" },
+        { "key": "husky.jpeg" }
     ],
 
-    "runs": 25,
-    "threads": 25,
-    "iterations": 1,
-    "sleepTime": 1,
+    "runs": 80,
+    "threads": 80,
+    "iterations": 2,
+    "sleepTime": 2,
     "randomSeed": 42,
 
-    "outputGroups": ["uuid", "cpuType", "vmuptime", "newcontainer", "endpoint", "containerID", "vmID", "zAll", "zTenancy[vmID]", "zTenancy[vmID[iteration]]"],
+    "outputGroups": ["payload", "cpuType", "newContainer"],
     "outputRawOfGroup": ["zTenancy[vmID[iteration]]", "zTenancy[vmID]", "cpuType"],
     "showAsList": ["vmuptime", "cpuType", "endpoint", "containerID", "vmID", "vmID[iteration]"],
     "showAsSum": ["newcontainer"],
@@ -36,6 +39,6 @@
     "overlapFilter": "imageProcessingTest",
 
     "openCSV": true,
-    "combineSheets": false,
-    "warmupBuffer": 0
+    "combineSheets": true,
+    "warmupBuffer": 1
 }
