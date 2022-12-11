@@ -11,6 +11,7 @@ with open("runs.csv") as file:
     for run in runs:
         # Super fragile way to fix payload output
         payload = run["payload"] = loads(run["payload"].replace("\";", "\","))
+        print(payload)
         filter = run["filter"] = payload["filter"]
         runtime = int(run["runtime"])
         newcontainer = int(run["newcontainer"])
@@ -27,7 +28,7 @@ with open("runs.csv") as file:
         image: {
             filter: {
                 "cold" if newcontainer else "warm": {
-                    "avg": sum(runtimes)/len(runtimes),
+                    "average_runtime_ms": round(sum(runtimes)/len(runtimes)),
                     "sample_size": len(runtimes),
                 }
                 for newcontainer, runtimes in runtime_by_newcontainer.items()
