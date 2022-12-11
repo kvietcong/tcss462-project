@@ -50,7 +50,7 @@
     "removeDuplicateContainers": false,
     "overlapFilter": "imageProcessingTest",
 
-    "openCSV": true,
+    "openCSV": false,
     "combineSheets": true,
     "warmupBuffer": 0
 }
