@@ -52,5 +52,5 @@
 
     "openCSV": true,
     "combineSheets": true,
-    "warmupBuffer": 1
+    "warmupBuffer": 0
 }
