@@ -1,7 +1,5 @@
-from statistics import mean, stdev
-from json import loads, dumps
+from json import loads
 from glob import glob
-from sys import argv
 import pandas as pd
 import numpy as np
 
