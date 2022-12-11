@@ -3,21 +3,33 @@
     "callAsync": false,
     "memorySettings": [],
     "parentPayload": {
-        "filter": "greyscale",
-        "newKey": "greyscale-{}"
+        "key": "vietfood.jpg"
     },
     "payloads": [
-        { "key": "mountains.jpg" },
-        { "key": "husky.jpeg" },
-        { "key": "mountains.jpg" },
-        { "key": "husky.jpeg" }
+        {
+            "filter": "greyscale",
+            "newKey": "greyscale-{}"
+        },
+        {
+            "filter": "soften",
+            "newKey": "soften-{}"
+        },
+        {
+            "filter": "flipVertical",
+            "newKey": "vertical-{}"
+        },
+        {
+            "filter": "flipHorizontal",
+            "newKey": "horizontal-{}"
+        }
     ],
 
-    "runs": 80,
-    "threads": 80,
+    "runs": 40,
+    "threads": 40,
     "iterations": 2,
     "sleepTime": 2,
     "randomSeed": 42,
+    "shufflePayloads": true,
 
     "outputGroups": ["payload", "cpuType", "newContainer"],
     "outputRawOfGroup": ["zTenancy[vmID[iteration]]", "zTenancy[vmID]", "cpuType"],

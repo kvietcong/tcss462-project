@@ -1,0 +1,56 @@
+{
+    "callWithCLI": true,
+    "callAsync": false,
+    "memorySettings": [],
+    "parentPayload": {
+        "key": "husky.jpeg"
+    },
+    "payloads": [
+        {
+            "filter": "greyscale",
+            "newKey": "greyscale-{}"
+        },
+        {
+            "filter": "soften",
+            "newKey": "soften-{}"
+        },
+        {
+            "filter": "flipVertical",
+            "newKey": "vertical-{}"
+        },
+        {
+            "filter": "flipHorizontal",
+            "newKey": "horizontal-{}"
+        }
+    ],
+
+    "runs": 40,
+    "threads": 40,
+    "iterations": 2,
+    "sleepTime": 2,
+    "randomSeed": 42,
+    "shufflePayloads": true,
+
+    "outputGroups": ["payload", "cpuType", "newContainer"],
+    "outputRawOfGroup": ["zTenancy[vmID[iteration]]", "zTenancy[vmID]", "cpuType"],
+    "showAsList": ["vmuptime", "cpuType", "endpoint", "containerID", "vmID", "vmID[iteration]"],
+    "showAsSum": ["newcontainer"],
+
+    "ignoreFromAll": ["zAll", "lang", "version", "linuxVersion", "platform", "hostname"],
+    "ignoreFromGroups": ["1_run_id", "2_thread_id", "cpuModel", "cpuIdle", "cpuIowait", "cpuIrq", "cpuKrn", "cpuNice", "cpuSoftIrq", "cpuUsr"],
+    "ignoreByGroup": {
+      "containerID": ["containerID"],
+      "cpuType": ["cpuType"],
+      "vmID": ["vmID"],
+      "zTenancy[vmID]": ["cpuType"],
+      "zTenancy[vmID[iteration]]": ["cpuType"]
+    },
+
+    "invalidators": {},
+    "removeDuplicateContainers": false,
+    "overlapFilter": "imageProcessingTest",
+
+    "openCSV": true,
+    "combineSheets": true,
+    "warmupBuffer": 1
+}
