@@ -8,16 +8,16 @@
     },
     "payloads": [
         {
-            "filter": "greyscale",
+            "filter": "greyscale"
         },
         {
-            "filter": "soften",
+            "filter": "soften"
         },
         {
-            "filter": "flipVertical",
+            "filter": "flipVertical"
         },
         {
-            "filter": "flipHorizontal",
+            "filter": "flipHorizontal"
         }
     ],
 
