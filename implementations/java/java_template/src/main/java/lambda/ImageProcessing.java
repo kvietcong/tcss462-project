@@ -103,6 +103,11 @@ public class ImageProcessing {
             flip.filter(myImage);
         }
 
+        if(filter.equals("flipVertical")){
+            FlipVerticalFilter flipV = new FlipVerticalFilter();
+            flipV.filter(myImage);
+        }
+
         //create new file and save the image to be that file
 
         //String path = System.getProperty("user.dir");

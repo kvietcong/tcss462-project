@@ -3,7 +3,7 @@
     "callAsync": false,
     "memorySettings": [],
     "parentPayload": {
-        "key": "husky.jpeg"
+        "key": "husky.jpeg",
         "bucket": "test.bucket.462-562.f22.dvu"
     },
     "payloads": [
