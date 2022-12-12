@@ -11,12 +11,18 @@ import filters.SoftenFilter;
 import image.PixelImage;
 import saaf.Inspector;
 
+final class FILTERS {
+    public static final GrayscaleFilter GREYSCALE = new GrayscaleFilter();
+    public static final SoftenFilter SOFTEN = new SoftenFilter();
+    public static final FlipHorizontalFilter FLIP_H = new FlipHorizontalFilter();
+    public static final FlipVerticalFilter FLIP_V = new FlipVerticalFilter();
+}
+
 /**
  * The class to process the image.
  * @author Codi Chun
  */
 public class ImageProcessing {
-
     //static String myBucket;
     static PixelImage myImage;
     static String imagePath;
@@ -91,23 +97,15 @@ public class ImageProcessing {
 
         //filter the image
         if(filter.equals("greyscale")){
-            GrayscaleFilter grayscale = new GrayscaleFilter();
-            grayscale.filter(myImage);
-        }
-
-        if(filter.equals("soften")){
-            SoftenFilter soften = new SoftenFilter();
-            soften.filter(myImage);
-        }
-
-        if(filter.equals("flipHorizontal")){
-            FlipHorizontalFilter flip = new FlipHorizontalFilter();
-            flip.filter(myImage);
-        }
-
-        if(filter.equals("flipVertical")){
-            FlipVerticalFilter flipV = new FlipVerticalFilter();
-            flipV.filter(myImage);
+            FILTERS.GREYSCALE.filter(myImage);
+        } else if(filter.equals("soften")){
+            FILTERS.SOFTEN.filter(myImage);
+        } else if(filter.equals("flipHorizontal")){
+            FILTERS.FLIP_H.filter(myImage);
+        } else if(filter.equals("flipVertical")){
+            FILTERS.FLIP_V.filter(myImage);
+        } else {
+            throw new IllegalArgumentException("Invalid filter: " + filter);
         }
 
         //create new file and save the image to be that file
