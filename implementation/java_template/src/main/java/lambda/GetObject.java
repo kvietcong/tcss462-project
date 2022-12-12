@@ -23,7 +23,6 @@ public class GetObject {
      */
     public static void main(String[] args) throws IOException {
         new GetObject("test.bucket.462-562.f22.cmu", "husky.jpeg");
-      
     }
 
     String bucket;
@@ -34,8 +33,8 @@ public class GetObject {
      * Constructor
      * @throws IOException
      */
-    public GetObject(String theBuket, String theKey) throws IOException{
-        this.bucket = theBuket;
+    public GetObject(String theBucket, String theKey) throws IOException{
+        this.bucket = theBucket;
         //"test.bucket.462-562.f22.cc";
         this.key = theKey;
         //"husky.jpeg";
@@ -47,13 +46,13 @@ public class GetObject {
      * @throws IOException
      */
     private static void getObjectFromBucket(String bucket, String key) throws IOException{
-        
+
         AmazonS3 client = AmazonS3ClientBuilder.standard().build();
-         
+
         S3Object s3Object = client.getObject(new GetObjectRequest(bucket,key));
-               
+
         InputStream response = s3Object.getObjectContent();
-        pixelImage = PixelImage.load(response);                            
+        pixelImage = PixelImage.load(response);
         response.close();
 
     }

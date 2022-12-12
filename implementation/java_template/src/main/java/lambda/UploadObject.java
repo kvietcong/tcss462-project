@@ -33,7 +33,7 @@ public class UploadObject {
      */
     public static void UploadObjectToBucket(String bucketName, String fileName){
 
-        String filePath = "/tmp" + "/" + fileName;
+        String filePath = "/tmp/" + fileName;
         //String filePath = System.getProperty("user.dir") + "/" + fileName;
         System.out.println(filePath);
         String key = fileName;
@@ -41,8 +41,8 @@ public class UploadObject {
         client.putObject(bucketName, key, new File(filePath));
 
         //TODO: SEE IF WE COULD ADD A WAITER HERE??
-         
-        System.out.println("File " + fileName + " was uploaded.");     
+
+        System.out.println("File " + fileName + " was uploaded.");
     }
 }
 

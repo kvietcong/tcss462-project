@@ -11,8 +11,6 @@ import filters.SoftenFilter;
 import image.PixelImage;
 import saaf.Inspector;
 
-
- 
 /**
  * The class to process the image.
  * @author Codi Chun
@@ -26,20 +24,19 @@ public class ImageProcessing {
     static String bucket;
     static String key;
     static String filter;
+    static String newKey;
     static int repeats = 1;
-        
-
 
     /*
      * ONLY FOR LOCAL TESTING
      */
     public static void main(String[] args) throws IOException {
-    // bucket = "test.bucket.462-562.f22.cc";
-    // key = "husky.jpeg"; 
-    // filter = "ST";
-    // downloadImage();
-    // processImage();
-    // uploadImage();
+        // bucket = "test.bucket.462-562.f22.cc";
+        // key = "husky.jpeg";
+        // filter = "ST";
+        // downloadImage();
+        // processImage();
+        // uploadImage();
     }
 
     /**
@@ -49,29 +46,28 @@ public class ImageProcessing {
      * @throws IOException
      */
     public static HashMap<String, Object> handleRequest(HashMap<String, String> request, Context context)  throws IOException{
-        
-         //Collect initial data.
-         Inspector inspector = new Inspector();
-         inspector.inspectAll();
+
+        //Collect initial data.
+        Inspector inspector = new Inspector();
+        inspector.inspectAll();
 
         bucket = request.get("bucket");
         key = request.get("key");
         filter = request.get("filter");
-
-        if(request.get("repeats")!=null){
-            repeats = Integer.valueOf(request.get("repeats"));
-        }
+        newKey = request.getOrDefault("newKey", filter + "-" + key);
+        newKey = newKey.replace("{}", key);
+        repeats = Integer.valueOf(request.getOrDefault("repeats", "1"));
 
         downloadImage();
-        
-       for(int i = 0; i<repeats; i++){
-         processImage();
-       }
-         uploadImage();
- 
-         //Collect final information such as total runtime and cpu deltas.
-         inspector.inspectAllDeltas();
-         return inspector.finish();
+
+        for(int i = 0; i < repeats; i++){
+            processImage(newKey);
+        }
+        uploadImage(newKey);
+
+        //Collect final information such as total runtime and cpu deltas.
+        inspector.inspectAllDeltas();
+        return inspector.finish();
 
     }
 
@@ -91,7 +87,7 @@ public class ImageProcessing {
      * Process the image by 3 filters
      * @throws IOException
      */
-    public static void processImage() throws IOException {
+    public static void processImage(String newKey) throws IOException {
 
         //filter the image
         if(filter.equals("greyscale")){
@@ -118,7 +114,7 @@ public class ImageProcessing {
 
         //String path = System.getProperty("user.dir");
         String path = "/tmp";
-        File newFile = new File(path + "/edited-" + key);
+        File newFile = new File(path + "/" + newKey);
         myImage.save(newFile);
     }
 
@@ -183,7 +179,7 @@ public class ImageProcessing {
     //         newFile.createNewFile();
 
     //     }
-        
+
     //     myImage.save(newFile);
     //}
 
@@ -191,9 +187,8 @@ public class ImageProcessing {
     /**
      * Upload the image to S3 bucket
      */
-    public static void uploadImage(){
-        String fileName = "edited-" + key;
-        System.out.println(fileName);
-        new UploadObject(bucket, fileName);
+    public static void uploadImage(String newKey){
+        System.out.println(newKey);
+        new UploadObject(bucket, newKey);
     }
 }
