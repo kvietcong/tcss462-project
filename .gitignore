@@ -1,7 +1,7 @@
 node_modules
-.DS_Store
 package-lock.json
 **/history/**
 **/.vscode
 **/.ipynb_checkpoints
 **/*.zip
+**/.DS_Store
