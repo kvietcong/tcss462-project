@@ -1,0 +1,49 @@
+{
+    "callWithCLI": true,
+    "callAsync": false,
+    "memorySettings": [],
+    "parentPayload": {
+        "bucket": "test.bucket.462-562.f22.kv",
+        "filter": "soften",
+        "newKey": "soften x 8 - {}",
+        "repeats": 8
+    },
+    "payloads": [
+        { "key": "5472x3648@11MB - lanterns.jpg" },
+        { "key": "3840x2160@566KB - mountains.jpg" },
+        { "key": "1920x1200@958KB - deathstar.jpg" },
+        { "key": "700x466@384KB - vietfood.jpg" },
+        { "key": "256x256@17KB - husky.jpg" },
+        { "key": "50x50@5KB - osu.jpg" }
+    ],
+
+    "runs": 6,
+    "threads": 6,
+    "iterations": 1,
+    "sleepTime": 0.5,
+    "randomSeed": 42,
+    "shufflePayloads": true,
+
+    "outputGroups": ["payload", "cpuType", "newContainer"],
+    "outputRawOfGroup": ["zTenancy[vmID[iteration]]", "zTenancy[vmID]", "cpuType"],
+    "showAsList": ["vmuptime", "cpuType", "endpoint", "containerID", "vmID", "vmID[iteration]"],
+    "showAsSum": ["newcontainer"],
+
+    "ignoreFromAll": ["zAll", "lang", "version", "linuxVersion", "platform", "hostname"],
+    "ignoreFromGroups": ["1_run_id", "2_thread_id", "cpuModel", "cpuIdle", "cpuIowait", "cpuIrq", "cpuKrn", "cpuNice", "cpuSoftIrq", "cpuUsr"],
+    "ignoreByGroup": {
+      "containerID": ["containerID"],
+      "cpuType": ["cpuType"],
+      "vmID": ["vmID"],
+      "zTenancy[vmID]": ["cpuType"],
+      "zTenancy[vmID[iteration]]": ["cpuType"]
+    },
+
+    "invalidators": {},
+    "removeDuplicateContainers": false,
+    "overlapFilter": "imageProcessingTest",
+
+    "openCSV": false,
+    "combineSheets": false,
+    "warmupBuffer": 0
+}

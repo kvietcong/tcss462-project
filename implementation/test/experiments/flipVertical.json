@@ -3,31 +3,23 @@
     "callAsync": false,
     "memorySettings": [],
     "parentPayload": {
-        "key": "mountains.jpg"
+        "bucket": "test.bucket.462-562.f22.kv",
+        "filter": "flipVertical",
+        "newKey": "flipVertical - {}"
     },
     "payloads": [
-        {
-            "filter": "greyscale",
-            "newKey": "greyscale-{}"
-        },
-        {
-            "filter": "soften",
-            "newKey": "soften-{}"
-        },
-        {
-            "filter": "flipVertical",
-            "newKey": "vertical-{}"
-        },
-        {
-            "filter": "flipHorizontal",
-            "newKey": "horizontal-{}"
-        }
+        { "key": "5472x3648@11MB - lanterns.jpg" },
+        { "key": "3840x2160@566KB - mountains.jpg" },
+        { "key": "1920x1200@958KB - deathstar.jpg" },
+        { "key": "700x466@384KB - vietfood.jpg" },
+        { "key": "256x256@17KB - husky.jpg" },
+        { "key": "50x50@5KB - osu.jpg" }
     ],
 
-    "runs": 40,
-    "threads": 40,
-    "iterations": 2,
-    "sleepTime": 2,
+    "runs": 6,
+    "threads": 6,
+    "iterations": 1,
+    "sleepTime": 0.5,
     "randomSeed": 42,
     "shufflePayloads": true,
 
@@ -51,6 +43,6 @@
     "overlapFilter": "imageProcessingTest",
 
     "openCSV": false,
-    "combineSheets": true,
+    "combineSheets": false,
     "warmupBuffer": 0
 }
