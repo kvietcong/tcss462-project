@@ -23,23 +23,24 @@ public class ImageProcessing {
     static PixelImage myImage;
     static String imagePath;
     static File imageFile;
-        
-
-
-    public static void main(String[] args) throws IOException {
-    bucket = "test.bucket.462-562.f22.cc";
-    key = "husky.jpeg"; 
-    filter = "ST";
-    downloadImage();
-    processImage();
-    uploadImage();
-    }
-
-
     static String bucket;
     static String key;
     static String filter;
+    static int repeats = 1;
+        
 
+
+    /*
+     * ONLY FOR LOCAL TESTING
+     */
+    public static void main(String[] args) throws IOException {
+    // bucket = "test.bucket.462-562.f22.cc";
+    // key = "husky.jpeg"; 
+    // filter = "ST";
+    // downloadImage();
+    // processImage();
+    // uploadImage();
+    }
 
     /**
      * lambda handler
@@ -48,24 +49,29 @@ public class ImageProcessing {
      * @throws IOException
      */
     public static HashMap<String, Object> handleRequest(HashMap<String, String> request, Context context)  throws IOException{
-                //Collect initial data.
-                Inspector inspector = new Inspector();
-                inspector.inspectAll();
-
-
-
+        
+         //Collect initial data.
+         Inspector inspector = new Inspector();
+         inspector.inspectAll();
 
         bucket = request.get("bucket");
         key = request.get("key");
         filter = request.get("filter");
 
-        downloadImage();
-        processImage();
-        uploadImage();
+        if(request.get("repeats")!=null){
+            repeats = Integer.valueOf(request.get("repeats"));
+        }
 
-                //Collect final information such as total runtime and cpu deltas.
-                inspector.inspectAllDeltas();
-                return inspector.finish();
+        downloadImage();
+        
+       for(int i = 0; i<repeats; i++){
+         processImage();
+       }
+         uploadImage();
+ 
+         //Collect final information such as total runtime and cpu deltas.
+         inspector.inspectAllDeltas();
+         return inspector.finish();
 
     }
 
@@ -113,75 +119,75 @@ public class ImageProcessing {
         //String path = System.getProperty("user.dir");
         String path = "/tmp";
         File newFile = new File(path + "/edited-" + key);
-        //newFile.getParentFile().mkdirs(); 
-        //newFile.createNewFile();
         myImage.save(newFile);
     }
 
 
 
-    /**
-     * Process the image by 1 chosen filter
-     * @throws IOException
-     */
-    public static void processImageTwo( String option , int n )throws IOException {
+    // /**
+    //  * Process the image by 1 chosen filter
+    //  * @throws IOException
+    //  */
+    // public static void processImageTwo( String option , int n )throws IOException {
 
-        //  by getting input from the keyboard
-        // c
-        //String option = "";
-        //Scanner s = new Scanner(system.in);
-        //option = s.nextLine();
-        File newFile = null;
-        //filter the image
-        for ( int i = 0 ; i< n; i++) {
+    //     //  by getting input from the keyboard
+    //     // c
+    //     //String option = "";
+    //     //Scanner s = new Scanner(system.in);
+    //     //option = s.nextLine();
+    //     File newFile = null;
+    //     //filter the image
+    //     for ( int i = 0 ; i< n; i++) {
 
-            switch (option) {
-                case "greyscale":
-                    GrayscaleFilter grayscale = new GrayscaleFilter();
-                    grayscale.filter(myImage);
-                    break;
+    //         switch (option) {
+    //             case "greyscale":
+    //                 GrayscaleFilter grayscale = new GrayscaleFilter();
+    //                 grayscale.filter(myImage);
+    //                 break;
 
-                case "soften":
-                    SoftenFilter soften = new SoftenFilter();
-                    soften.filter(myImage);
-                    break;
+    //             case "soften":
+    //                 SoftenFilter soften = new SoftenFilter();
+    //                 soften.filter(myImage);
+    //                 break;
 
-                case "flipHorizontal":
-                    FlipHorizontalFilter flip = new FlipHorizontalFilter();
-                    flip.filter(myImage);
-                    break;
+    //             case "flipHorizontal":
+    //                 FlipHorizontalFilter flip = new FlipHorizontalFilter();
+    //                 flip.filter(myImage);
+    //                 break;
 
-                case "flipVertical":
-                    FlipVerticalFilter flipv = new FlipVerticalFilter();
-                    flipv.filter(myImage);
-                    break;
-            }
+    //             case "flipVertical":
+    //                 FlipVerticalFilter flipv = new FlipVerticalFilter();
+    //                 flipv.filter(myImage);
+    //                 break;
+    //         }
 
-            //   using a different name
+    //         //   using a different name
 
-            //  What would be the best option ?
+    //         //  What would be the best option ?
 
 
-        /*switch( option ){
-            case "greyscale": case "Greyscale": GrayscaleFilter grayscale = new GrayscaleFilter();
-                grayscale.filter(myImage);  break;
+    //     /*switch( option ){
+    //         case "greyscale": case "Greyscale": GrayscaleFilter grayscale = new GrayscaleFilter();
+    //             grayscale.filter(myImage);  break;
 
-            case "soften": case "Soften":  SoftenFilter soften = new SoftenFilter();
-                soften.filter(myImage);  break;
+    //         case "soften": case "Soften":  SoftenFilter soften = new SoftenFilter();
+    //             soften.filter(myImage);  break;
 
-            case "flipHorizontal": case "Flip":  FlipHorizontalFilter flip = new FlipHorizontalFilter();
-                flip.filter(myImage);  break;
-        }*/
-            //create new file and save the image to be that file
-            String path = System.getProperty("user.dir");
-            newFile = new File(path + "/edited.png");
-            newFile.getParentFile().mkdirs();
-            newFile.createNewFile();
+    //         case "flipHorizontal": case "Flip":  FlipHorizontalFilter flip = new FlipHorizontalFilter();
+    //             flip.filter(myImage);  break;
+    //     }*/
+    //         //create new file and save the image to be that file
+    //         String path = System.getProperty("user.dir");
+    //         newFile = new File(path + "/edited.png");
+    //         newFile.getParentFile().mkdirs();
+    //         newFile.createNewFile();
 
-        }
+    //     }
         
-        myImage.save(newFile);
-    }
+    //     myImage.save(newFile);
+    //}
+
+
     /**
      * Upload the image to S3 bucket
      */
