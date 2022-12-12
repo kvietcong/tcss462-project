@@ -3,3 +3,5 @@ node_modules
 package-lock.json
 **/history/**
 **/.vscode
+**/.ipynb_checkpoints
+**/*.zip
