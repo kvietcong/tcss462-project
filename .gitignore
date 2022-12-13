@@ -5,3 +5,4 @@ package-lock.json
 **/.ipynb_checkpoints
 **/*.zip
 **/.DS_Store
+**/.*.txt

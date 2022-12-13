@@ -5,7 +5,8 @@
     "parentPayload": {
         "bucket": "test.bucket.462-562.f22.kv",
         "filter": "soften",
-        "newKey": "soften - {}"
+        "newKey": "soften x 4 - {}",
+        "repeats": 4
     },
     "payloads": [
         { "key": "5472x3648@11MB - lanterns.jpg" },
